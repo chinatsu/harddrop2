@@ -8,5 +8,6 @@ This time with Python and flask
 
 * flask
 * sqlalchemy
+* mysql-connector
 * flask-sqlalchemy
 * flask-login (not used yet)

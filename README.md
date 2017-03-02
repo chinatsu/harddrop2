@@ -7,7 +7,10 @@ This time with Python and flask
 # Requirements
 
 * flask
+* flask-bootstrap
+* flask-nav
 * sqlalchemy
 * mysql-connector
 * flask-sqlalchemy
-* flask-login (not used yet)
+* flask-login
+* wtforms

@@ -1,4 +1,5 @@
-from harddrop import db
+from harddrop import db, login
+from flask_login import UserMixin
 from sqlalchemy.dialects.mysql import \
         BIGINT, BINARY, BIT, BLOB, BOOLEAN, CHAR, DATE, \
         DATETIME, DECIMAL, DECIMAL, DOUBLE, ENUM, FLOAT, INTEGER, \
@@ -6,9 +7,13 @@ from sqlalchemy.dialects.mysql import \
         NUMERIC, NVARCHAR, REAL, SET, SMALLINT, TEXT, TIME, TIMESTAMP, \
         TINYBLOB, TINYINT, TINYTEXT, VARBINARY, VARCHAR, YEAR
 
+@login.user_loader
+def get_user(ident):
+  return User.query.get(int(ident))
+
 # modeled after the current phpfox tables
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'phpfox_user'
     id = db.Column('id', INTEGER(11), primary_key=True)
     type = db.Column('type', TINYINT(4), default=3)
@@ -76,10 +81,18 @@ class User(db.Model):
     dblon = db.Column('dblon', TEXT, default='')
     dblat = db.Column('dblat', TEXT, default='')
 
-    def __init__(self, user, password, email):
+    def __init__(self, user, password, email, **kwargs):
         self.user = user
         self.password = password
         self.email = email
+        if 'gender' in kwargs:
+            self.gender = kwargs['gender']
+        if 'year' in kwargs:
+            self.year = kwargs['year']
+        if 'month' in kwargs:
+            self.month = kwargs['month']
+        if 'day' in kwargs:
+            self.day = kwargs['day']
 
     def __repr__(self):
         return '<User %r>' % self.user

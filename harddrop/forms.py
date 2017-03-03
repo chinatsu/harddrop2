@@ -17,7 +17,7 @@ class AddVideo(Form):
                                        ], coerce=int)
     tags = TextField('Tags', [validators.optional()])
     details = TextAreaField('Details', [validators.optional()])
-    url = TextField('URL', [validators.regexp('http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?')])
+    url = TextField('URL', [validators.regexp('http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', message="Must be a YouTube URL.")])
     submit = SubmitField('Submit')
     
 class Register(Form):

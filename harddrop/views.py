@@ -1,5 +1,7 @@
 from harddrop import app, db, forms, nav
 from harddrop.models import phpfox
+from harddrop.blueprints.user import user
+from harddrop.blueprints.video import video
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_nav.elements import *
 from harddrop.nav_elements import ExtendedNavbar, CustomBootstrapRenderer
@@ -7,6 +9,8 @@ from sqlalchemy import exc
 from flask import request, redirect, url_for, render_template, flash
 from datetime import datetime
 
+app.register_blueprint(user)
+app.register_blueprint(video)
 
 @app.errorhandler(401)
 def must_login(e):
@@ -83,43 +87,6 @@ def register_user():
                 return redirect(url_for('register_user'))
     return render_template('form.tpl', form=form)
 
-@app.route('/user')
-@login_required
-def own_profile():
-    return render_template('profile.tpl', user=current_user)
-
-@app.route('/user/<userid>')
-@login_required
-def profile(userid):
-    user = phpfox.User.query.filter_by(id=userid).first()
-    if user == None:
-        flash('User not found')
-        return redirect(url_for('login'))
-    return render_template('profile.tpl', user=user)
-
-@app.route('/videos')
-def list_videos():
-    videos = ""
-    for video in reversed(phpfox.Video.query.all()):
-        videos += "<p>{} - {}</p>".format(video.vid_title, video.vid_url)
-    return videos
-
-@app.route('/add/video', methods=['POST', 'GET'])
-@login_required
-def add_video():
-    form = forms.AddVideo()
-    if request.method == 'POST':
-        form = forms.AddVideo(request.form)
-        if form.validate():
-            video = phpfox.Video(form.title.data, form.url.data, type=form.category.data, tags=form.tags.data, details=form.details.data)
-            try:
-                db.session.add(video)
-                db.session.commit()
-                return redirect(url_for('list_videos'))
-            except exc.IntegrityError:
-                return "{} has already been submitted".format(video.vid_url)
-    return render_template('form.tpl', form=form)
-
 @nav.navigation()
 def top_nav():
     if current_user.is_authenticated:
@@ -129,7 +96,7 @@ def top_nav():
             right_items=(
                 Text('The inbox icon should be here'),
                 Subgroup(current_user.user,
-                    View('Profile', 'own_profile'),
+                    View('Profile', 'user.own_profile'),
                     View('Settings', 'settings'),
                     Separator(),
                     View('Log out', 'logout')

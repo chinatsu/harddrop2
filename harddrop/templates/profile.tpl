@@ -24,7 +24,7 @@
   {%- endwith %}
     <div class="jumbotron">
         <p>{{ user.user }}</p>
-        <p>{{ user.gender }}</p>
+        <p>{{ user.id }}</p>
     </div>
    </div>
 {%- endblock %}

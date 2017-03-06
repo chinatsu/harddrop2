@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash
 from harddrop.models import phpfox
 from flask_login import login_required, current_user
 
-user = Blueprint('user', __name__, url_prefix='/user')
+user = Blueprint('user', __name__, url_prefix='/hd2/user')
 
 
 @user.route('/')

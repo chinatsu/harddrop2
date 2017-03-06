@@ -8,6 +8,7 @@ from harddrop.nav_elements import ExtendedNavbar, CustomBootstrapRenderer
 from sqlalchemy import exc
 from flask import request, redirect, url_for, render_template, flash
 from datetime import datetime
+from passlib.hash import pbkdf2_sha256
 
 app.register_blueprint(user)
 app.register_blueprint(video)
@@ -17,11 +18,11 @@ def must_login(e):
     flash("Login required")
     return redirect(url_for('login'))
 
-@app.route('/')
+@app.route('/hd2/')
 def index():
     return render_template('index.tpl')
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/hd2/login', methods=['POST', 'GET'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('settings'))
@@ -30,40 +31,46 @@ def login():
         form = forms.LoginForm(request.form)
         print(request.data)
         user = phpfox.User.query.filter_by(user=form.username.data).first()
+        print(user.password)
         if user == None:
-            flash('User not found')
+            flash('Login details incorrect')
             return redirect(url_for('login'))
-        if user.password == form.password.data:
+        if pbkdf2_sha256.verify(form.password.data, user.password):
             login_user(user)
             flash('Logged in successfully')
             return redirect(url_for('index'))
+        else:
+            flash('Login details incorrect')
+            return redirect(url_for('login'))
     return render_template('form.tpl', form=form)
 
-@app.route('/logout')
+@app.route('/hd2/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/settings')
+@app.route('/hd2/settings')
 @login_required
 def settings():
     return render_template('settings.tpl')
 
-@app.route('/register', methods=['POST', 'GET'])
+@app.route('/hd2/register', methods=['POST', 'GET'])
 def register_user():
     form = forms.Register()
     if request.method == 'POST':
         form = forms.Register(request.form)
         if form.validate():
+            pass_hash = pbkdf2_sha256.hash(form.password.data)
             if form.dob.data:
                 try:
                     dob = datetime.strptime(form.dob.data, '%Y/%m/%d')
                 except:
+                    flash("Date of birth did not follow the correct format")
                     return redirect(url_for('register_user'))
                 user = phpfox.User(
                     form.username.data,
-                    form.password.data,
+                    pass_hash,
                     form.email.data,
                     gender=form.gender.data,
                     year=dob.year,
@@ -73,7 +80,7 @@ def register_user():
             else:
                 user = phpfox.User(
                     form.username.data,
-                    form.password.data,
+                    pass_hash,
                     form.email.data,
                     gender=form.gender.data
                 )

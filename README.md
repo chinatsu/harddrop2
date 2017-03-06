@@ -10,7 +10,9 @@ This time with Python and flask
 * flask-bootstrap
 * flask-nav
 * sqlalchemy
+* alembic (only required for database migration during development)
 * mysql-connector
 * flask-sqlalchemy
 * flask-login
 * wtforms
+* passlib

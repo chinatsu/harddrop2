@@ -4,7 +4,7 @@ from flask_login import login_required
 from sqlalchemy import exc
 from flask import Blueprint, request, flash, redirect, url_for, render_template
 
-video = Blueprint('video', __name__, url_prefix='/video')
+video = Blueprint('video', __name__, url_prefix='/hd2/video')
 
 @video.route('/add', methods=['POST', 'GET'])
 @login_required

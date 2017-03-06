@@ -1,5 +1,6 @@
 # sensitive configuration
 harddrop/config/
+harddrop/alembic.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

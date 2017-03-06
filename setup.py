@@ -12,6 +12,7 @@ setup(
         'flask-sqlalchemy',
         'flask-login',
         'wtforms',
+        'passlib',
         'mysql-connector'
     ],
 )

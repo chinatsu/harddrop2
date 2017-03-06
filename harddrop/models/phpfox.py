@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):
     id = db.Column('id', INTEGER(11), primary_key=True)
     type = db.Column('type', TINYINT(4), default=3)
     user = db.Column('user', VARCHAR(25), unique=True)
-    password = db.Column('password', VARCHAR(35))
+    password = db.Column('password', VARCHAR(90))
     email = db.Column('email', VARCHAR(50))
     gender = db.Column('gender', MEDIUMINT(9), default=0)
     age = db.Column('age', CHAR(2), default='')
